@@ -133,9 +133,11 @@ Add the `crypto-js` library to `www/index.html` inside the `<head>` tag. This is
   <script src="[https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js](https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js)"></script>
   <!-- ... -->
 </head>
+ ```
 
-Step 2: Modify index.js for Direct Deletion
-Add your Cloudinary credentials directly to the top of index.js and replace the deleteImage function with the insecure version.
+**Step 2: Modify index.js for Direct Deletion
+Add your Cloudinary credentials directly to the top of index.js and replace the  deleteImage function with the insecure version.**
+```bash
 // ADD THESE CONSTANTS AT THE TOP OF index.js
 const CLOUDINARY_API_KEY = 'YOUR_CLOUDINARY_API_KEY';
 const CLOUDINARY_API_SECRET = 'YOUR_CLOUDINARY_API_SECRET';
@@ -207,6 +209,7 @@ function deleteImage(firebaseKey, publicId) {
     }
   }
 }
+ ```
 
 Remember to replace the placeholder values with your actual Cloudinary credentials.
 
