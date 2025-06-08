@@ -1,0 +1,12 @@
+{
+    "name": "cloudinary-delete-api",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "dev": "vercel dev"
+    },
+    "dependencies": {
+      "cloudinary": "^1.37.2"
+    }
+  }
+  

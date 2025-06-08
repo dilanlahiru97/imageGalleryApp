@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Image Gallery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="cordova.js"></script>
+    <style>
+      /* Basic styling for the application */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        text-align: center;
+        padding: 15px;
+        background-color: #f0f2f5;
+        color: #333;
+        margin: 0;
+      }
+      h2 {
+        color: #007bff;
+      }
+      button {
+        margin: 8px;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      button:active {
+        background-color: #004085;
+      }
+      #gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 25px;
+        gap: 15px; /* Adds space between gallery items */
+      }
+      /* Styling for individual gallery item wrappers */
+      .gallery-item-wrapper {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 170px; /* Fixed width for wrapper */
+      }
+      .gallery-item-wrapper img {
+        width: 150px; /* Fixed width for image */
+        height: 150px; /* Fixed height for image */
+        object-fit: cover; /* Ensures image covers the area, might crop */
+        margin-bottom: 10px; /* Space between image and buttons */
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+      .gallery-item-wrapper button {
+        width: calc(
+          100% - 10px
+        ); /* Make buttons take full width of wrapper minus some padding */
+        margin-top: 5px; /* Space between buttons if stacked */
+        padding: 8px 10px;
+        font-size: 14px;
+      }
+      /* Specific styles for delete and download buttons */
+      .delete-btn {
+        background-color: #dc3545; /* Red for delete */
+      }
+      .delete-btn:hover {
+        background-color: #c82333;
+      }
+      .download-btn {
+        background-color: #28a745; /* Green for download */
+      }
+      .download-btn:hover {
+        background-color: #218838;
+      }
+      /* Styling for the Image Viewer Modal */
+      .image-viewer-modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1000; /* Sit on top */
+        padding-top: 50px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.9
+        ); /* Black background with opacity */
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        margin: auto;
+        display: block;
+        max-width: 90%;
+        max-height: 80%;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .close-btn:hover {
+        color: #bbb;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>📷 Image Uploader & Gallery</h2>
+    <button id="pickBtn">🖼️ Pick Image</button>
+    <button id="cameraBtn">📸 Take Photo</button>
+    <button id="loadGallery">🔄 Load Gallery</button>
+
+    <div id="gallery"></div>
+
+    <div id="image-viewer" class="image-viewer-modal">
+      <span class="close-btn">&times;</span>
+      <img class="modal-content" id="modal-image" />
+    </div>
+
+    <script src="js/index.js"></script>
+      <script src="js/config.js"></script>
+
+  </body>
+</html>
