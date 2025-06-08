@@ -13,7 +13,7 @@ function onDeviceReady() {
   console.log("Cordova is ready and device features can be used.");
   checkAndRequestStoragePermission();
 
-  // Firebase configuration 
+  // Firebase configuration
   const firebaseConfig = AppConfig.firebase;
 
   // Initialize Firebase
@@ -263,7 +263,12 @@ function loadGallery() {
  */
 function downloadImage(imageUrl, publicId) {
   fetch(imageUrl)
-    .then((response) => response.blob())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.blob();
+    })
     .then((blob) => {
       const fileName = (publicId || "image_" + Date.now()) + ".jpg";
 
@@ -273,7 +278,7 @@ function downloadImage(imageUrl, publicId) {
         function (rootDir) {
           console.log("Successfully accessed root storage directory.");
 
-          // Step 2: Get or create the 'Download' directory within the root.
+          // Step 2: Get or create the 'Download' directory.
           rootDir.getDirectory(
             "Download",
             { create: true },
@@ -282,12 +287,36 @@ function downloadImage(imageUrl, publicId) {
                 "Successfully accessed/created the Download directory."
               );
 
+              // Step 3: Get or create the file handle.
               downloadDir.getFile(
                 fileName,
                 { create: true },
-                function (file) {
-                  console.log("Image saved");
-                  alert("Image saved ");
+                function (fileEntry) {
+                  console.log("File handle created:", fileEntry.name);
+
+                  // Step 4: Create a FileWriter to write to the file.
+                  fileEntry.createWriter(
+                    function (fileWriter) {
+                      // This function runs when the write is complete.
+                      fileWriter.onwriteend = function () {
+                        console.log("File successfully written to device.");
+                        alert("✅ Image saved to your 'Download' folder!");
+                      };
+
+                      // This function runs if an error occurs.
+                      fileWriter.onerror = function (e) {
+                        console.error("Failed to write file:", e.toString());
+                        alert("❌ Failed to save file.");
+                      };
+
+                      // Step 5: Write the downloaded image data (the blob) into the file.
+                      fileWriter.write(blob);
+                    },
+                    (err) => {
+                      alert("Failed to create file writer.");
+                      console.error("Error creating file writer:", err);
+                    }
+                  );
                 },
                 (err) => {
                   alert("Failed to create the final file.");
@@ -337,14 +366,11 @@ function deleteImage(firebaseKey, publicId) {
       console.log("Image reference removed from Firebase.");
       // 2. Send request to Vercel API (or your backend) to remove from Cloudinary
       // Ensure your serverless function URL is correct and handles Cloudinary deletion.
-      return fetch(
-         AppConfig.vercel.delete_api_url,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ public_id: publicId }),
-        }
-      );
+      return fetch(AppConfig.vercel.delete_api_url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id: publicId }),
+      });
     })
     .then((response) => {
       if (!response.ok) {
@@ -402,28 +428,28 @@ function deleteImage(firebaseKey, publicId) {
  * @param {string} imageUrl - The URL of the image to display.
  */
 function openImageViewer(imageUrl) {
-  const modal = document.getElementById('image-viewer');
-  const modalImg = document.getElementById('modal-image');
-  
+  const modal = document.getElementById("image-viewer");
+  const modalImg = document.getElementById("modal-image");
+
   modalImg.src = imageUrl;
   modal.style.display = "flex"; // Use 'flex' to help with centering
 
   // Get the close button and add event listener
-  const closeBtn = document.querySelector('.close-btn');
+  const closeBtn = document.querySelector(".close-btn");
   closeBtn.onclick = closeImageViewer;
-  
+
   // Also close if user clicks on the background
-  modal.onclick = function(event) {
+  modal.onclick = function (event) {
     if (event.target === modal) {
       closeImageViewer();
     }
-  }
+  };
 }
 
 /**
  * Closes the image viewer modal.
  */
 function closeImageViewer() {
-  const modal = document.getElementById('image-viewer');
+  const modal = document.getElementById("image-viewer");
   modal.style.display = "none";
 }
