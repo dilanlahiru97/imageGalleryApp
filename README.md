@@ -1,4 +1,4 @@
-# Image Gallery App
+# Online Image Gallery App
 
 A simple, cross-platform mobile application built with Apache Cordova that allows users to capture or select images, upload them to Cloudinary, and manage them in a gallery backed by Firebase Realtime Database.
 
